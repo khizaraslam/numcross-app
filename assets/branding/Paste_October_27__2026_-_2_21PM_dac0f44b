@@ -1,0 +1,2380 @@
+You are a senior Flutter game developer, mobile UI/UX designer, backend engineer, and QA engineer.
+
+Build a complete production-ready cross-math / number-puzzle mobile game for Android and iOS.
+
+The app should be inspired by the general concept of cross-math puzzle games, but it MUST NOT copy another application's branding, name, artwork, exact UI, exact level layouts, icons, sounds, text, or other copyrighted assets.
+
+Create an original product with its own identity, visual system, puzzle generator, progression system, and UI.
+
+# 1. PROJECT OVERVIEW
+
+Working app name:
+
+**NumCross – Math Puzzle**
+
+Make the app name easy to change later from one configuration file.
+
+Package placeholder:
+
+`com.company.numcross`
+
+Platforms:
+
+- Android
+- iOS
+
+Technology:
+
+- Flutter
+- Dart
+- Supabase
+- PostgreSQL through Supabase
+- Drift/SQLite for local storage
+- Riverpod for state management
+- go_router for navigation
+- Supabase Auth
+- Supabase Database
+- Supabase Edge Functions only where genuinely necessary
+
+Architecture:
+
+- Feature-first
+- Clean architecture principles
+- Repository layer
+- Service layer
+- Models/entities
+- UI separated from business logic
+- Reusable components
+- Strong typing
+- Null safety
+- Testable code
+
+The game must be offline-first.
+
+Core puzzle gameplay must work completely without internet.
+
+Internet should only be needed for features such as:
+
+- cloud sync
+- daily challenge synchronization
+- leaderboard
+- account sync
+- remote configuration
+- future events
+
+Do NOT make the main game dependent on Supabase availability.
+
+# 2. IMPORTANT DEVELOPMENT RULES
+
+Do not create only mock screens.
+
+Implement working functionality.
+
+Do not leave TODO placeholders for core features.
+
+Do not create fake buttons.
+
+Every visible main action should work.
+
+Use clean reusable widgets.
+
+Avoid huge widget files.
+
+Avoid unnecessary complexity.
+
+Run:
+
+- flutter format
+- flutter analyze
+- flutter test
+
+Fix errors and warnings before considering the task complete.
+
+The completed application must:
+
+- compile successfully
+- launch successfully
+- have responsive UI
+- work on small Android devices
+- work on large Android devices
+- work on iPhones
+- work on tablets where practical
+- support portrait orientation
+- preserve progress after app restart
+
+# 3. DESIGN DIRECTION
+
+Create a premium modern casual puzzle-game design.
+
+Do NOT copy CrossMath's visual design.
+
+Use a clean original visual system.
+
+Suggested style:
+
+- very light neutral background
+- primary blue/indigo
+- secondary teal
+- warm accent for streaks/rewards
+- rounded cards
+- soft shadows
+- large readable numbers
+- smooth animations
+- minimal clutter
+
+Create centralized design tokens:
+
+`AppColors`
+
+`AppTypography`
+
+`AppSpacing`
+
+`AppRadius`
+
+`AppShadows`
+
+`AppAnimations`
+
+Support:
+
+- Light mode
+- Dark mode
+- System mode
+
+UI should feel similar in quality to polished apps such as:
+
+- Sudoku apps
+- Word puzzle apps
+- modern casual games
+
+But do not copy them directly.
+
+Use Material 3 where appropriate while heavily customizing the visuals.
+
+# 4. BRANDING STRUCTURE
+
+Make these configurable:
+
+- app name
+- package name
+- primary color
+- secondary color
+- logo
+- app icon
+- support email
+- privacy policy URL
+- terms URL
+
+Create placeholders for:
+
+`assets/branding/logo.png`
+
+`assets/branding/app_icon.png`
+
+Create an original temporary vector-style NumCross logo programmatically or using Flutter shapes if final artwork is unavailable.
+
+# 5. APP STARTUP FLOW
+
+App launch:
+
+Splash Screen
+
+↓
+
+Check local app state
+
+↓
+
+First launch?
+
+YES → Onboarding
+
+NO → Home
+
+No mandatory registration.
+
+Users should be able to play immediately as guests.
+
+Use Supabase anonymous authentication behind the scenes when online if useful.
+
+Allow account linking later.
+
+# 6. SPLASH SCREEN
+
+Create a polished splash screen.
+
+Display:
+
+NumCross logo
+
+NumCross
+
+Math Puzzle
+
+Subtle animated number/grid elements.
+
+Duration approximately 1–2 seconds but do not unnecessarily delay startup.
+
+# 7. ONBOARDING
+
+Create 3 onboarding screens.
+
+Screen 1:
+
+Title:
+Solve Smart
+
+Description:
+Complete intersecting math equations and train your brain.
+
+Screen 2:
+
+Title:
+Play Anywhere
+
+Description:
+Thousands of puzzles available even when you're offline.
+
+Screen 3:
+
+Title:
+Challenge Yourself
+
+Description:
+Build streaks, complete daily challenges and climb the leaderboard.
+
+Bottom actions:
+
+Skip
+
+Next
+
+Get Started
+
+Persist onboarding completion locally.
+
+# 8. HOME SCREEN
+
+Design a high-quality main dashboard.
+
+Header:
+
+Profile/avatar
+
+NumCross logo/name
+
+Settings button
+
+Display:
+
+Current level
+
+Current streak
+
+Total stars / XP
+
+Main CTA:
+
+PLAY
+
+Difficulty selector:
+
+Easy
+Medium
+Hard
+Expert
+
+Create a Daily Challenge card.
+
+Example:
+
+Daily Challenge
+
+October 26
+
+🔥 7 Day Streak
+
+Play Today
+
+Create an optional Continue Game card if an unfinished game exists.
+
+Create quick navigation:
+
+Daily
+Levels
+Stats
+Leaderboard
+
+Bottom navigation:
+
+Home
+Challenges
+Stats
+Profile
+
+Keep the home screen uncluttered.
+
+# 9. CORE GAME MECHANICS
+
+Build a genuine Cross Math puzzle engine.
+
+Puzzle consists of intersecting horizontal and vertical equations.
+
+Example structures:
+
+8 + 4 = 12
+
+7 × ? = 42
+
+? - 5 = 8
+
+Equations intersect through shared number cells.
+
+The user fills missing number cells.
+
+Operators and equals signs are fixed.
+
+The game must know the complete solution.
+
+Generate puzzles algorithmically.
+
+Do not hardcode only a small list of puzzles.
+
+Also create a seeded generation system so the same seed produces the same puzzle.
+
+Required validation:
+
+- no division by zero
+- division should produce integer answers unless the selected mode explicitly allows otherwise
+- no impossible equation
+- no ambiguous solution
+- every generated puzzle must have at least one missing value
+- puzzle must have exactly one intended valid solution
+- equations must be internally consistent
+- prevent invalid duplicate constraints
+- generator must have fallback logic if a valid grid cannot be produced after N attempts
+
+Create unit tests for the generator.
+
+# 10. MATHEMATICAL RULES
+
+Easy:
+
+Operators:
++
+-
+
+Number range:
+1–20
+
+No negative results.
+
+Small grids.
+
+Medium:
+
+Operators:
++
+-
+×
+
+Number range:
+1–50
+
+Larger grid.
+
+Hard:
+
+Operators:
++
+-
+×
+÷
+
+Number range:
+1–100
+
+More empty cells.
+
+Fewer starting hints.
+
+Expert:
+
+All operators
+
+Larger grids
+
+More intersections
+
+Number range approximately:
+1–200
+
+Longer solving chains.
+
+Allow controlled negative values if enabled by configuration.
+
+Always make division exact unless decimal mode is explicitly added later.
+
+# 11. PUZZLE GRID
+
+Build a reusable custom grid widget.
+
+Cell types:
+
+NumberCell
+EmptyNumberCell
+OperatorCell
+EqualsCell
+BlockedCell
+
+EmptyNumberCell must be tappable.
+
+Selected cell should have clear visual feedback.
+
+Completed cells should display normally.
+
+Wrong entries should optionally highlight.
+
+Correct entries can subtly animate.
+
+Support grid resizing according to screen dimensions.
+
+Avoid tiny text.
+
+# 12. NUMBER INPUT
+
+Create custom number input controls.
+
+Options:
+
+0–9 buttons
+
+Delete
+
+Clear
+
+Optional +/- for Expert mode
+
+Do not automatically use the normal system keyboard for gameplay.
+
+Support multi-digit numbers.
+
+Selected cell should receive the entered number.
+
+# 13. GAME TOP BAR
+
+Display:
+
+Back button
+
+Difficulty
+
+Timer
+
+Pause button
+
+Optional mistake count
+
+Example:
+
+←    HARD        03:41        ⏸
+
+# 14. GAME ACTION BAR
+
+Actions:
+
+Undo
+
+Erase
+
+Hint
+
+Check
+
+Notes if useful
+
+Each action must work.
+
+Undo:
+
+Restore previous input state.
+
+Erase:
+
+Clear selected user-entered value.
+
+Hint:
+
+Reveal one correct missing cell.
+
+Check:
+
+Validate entered cells.
+
+# 15. HINT SYSTEM
+
+Users receive a limited number of free hints.
+
+Example:
+
+3 free hints per puzzle.
+
+Difficulty can modify hint count.
+
+When a hint is used:
+
+- choose an unresolved cell
+- reveal correct answer
+- visually distinguish hinted cells
+- update statistics
+
+No real-money purchase system required for V1.
+
+Create interfaces so additional hints could later be monetized.
+
+# 16. MISTAKE SYSTEM
+
+Create setting:
+
+Mistake Checking
+
+Options:
+
+Immediate
+
+On Check
+
+Off
+
+Immediate:
+
+Wrong values show immediately.
+
+On Check:
+
+Wrong values show only after Check button.
+
+Off:
+
+Only final puzzle submission validates.
+
+# 17. TIMER
+
+Create timer setting:
+
+Timer ON/OFF
+
+Timer pauses when:
+
+- pause dialog open
+- app goes into background if configured
+
+Persist ongoing session.
+
+Do not reset timer if app is accidentally closed.
+
+# 18. PAUSE SCREEN
+
+Display:
+
+Paused
+
+Resume
+
+Restart Puzzle
+
+Settings
+
+Quit to Home
+
+# 19. PUZZLE COMPLETION
+
+When all values are correct:
+
+Display an animated success sequence.
+
+Example:
+
+Excellent!
+
+Puzzle Completed
+
+Time:
+02:45
+
+Mistakes:
+1
+
+Hints:
+0
+
+XP:
++120
+
+Stars:
+★★★
+
+Actions:
+
+Next Puzzle
+
+Home
+
+Share Result
+
+# 20. STAR SYSTEM
+
+Award 1–3 stars.
+
+Possible formula should consider:
+
+- puzzle completion
+- hints used
+- mistakes
+- optional time performance
+
+Example:
+
+3 Stars:
+No hints and low mistakes
+
+2 Stars:
+Moderate hints/mistakes
+
+1 Star:
+Puzzle completed
+
+Do not make time overly punishing.
+
+# 21. XP SYSTEM
+
+Create XP rewards.
+
+Example base values:
+
+Easy: 50 XP
+
+Medium: 80 XP
+
+Hard: 120 XP
+
+Expert: 180 XP
+
+Bonus:
+
+No hints
+
+No mistakes
+
+Daily challenge
+
+Streak
+
+Keep all values configurable.
+
+# 22. PLAYER LEVEL
+
+Player begins at Level 1.
+
+XP increases player level.
+
+Use a simple progression formula.
+
+Example:
+
+XP required increases gradually with level.
+
+Create reusable:
+
+`XpService`
+
+Display progress bar:
+
+Level 12
+
+650 / 900 XP
+
+# 23. GAME LEVELS
+
+Create progression map.
+
+Example:
+
+World 1:
+Basics
+
+World 2:
+Multiplication
+
+World 3:
+Mixed Math
+
+World 4:
+Division
+
+World 5:
+Master Grid
+
+Each world can contain approximately 20 levels.
+
+Generate levels based on deterministic seeds.
+
+Do not manually store hundreds of grids.
+
+Each level should have:
+
+id
+seed
+difficulty
+stars earned
+best time
+completed
+attempt count
+
+Create Level Select screen.
+
+Locked levels should display a lock.
+
+Unlock next level after previous completion.
+
+# 24. ENDLESS MODE
+
+Create Endless Mode.
+
+Player continuously receives generated puzzles.
+
+Track:
+
+Solved count
+
+Current streak
+
+Best endless streak
+
+Average solve time
+
+Difficulty can gradually increase.
+
+# 25. DAILY CHALLENGE
+
+Create one daily challenge per calendar day.
+
+Use deterministic seed based on UTC date.
+
+Example:
+
+`daily-2026-10-26`
+
+This allows offline generation while keeping the puzzle identical for everyone.
+
+When online:
+
+Sync challenge metadata to Supabase.
+
+Track:
+
+completed
+completion time
+mistakes
+hints
+score
+
+Show monthly calendar.
+
+States:
+
+Completed
+
+Today
+
+Missed
+
+Future
+
+# 26. DAILY STREAK
+
+Streak increases when player completes the daily challenge.
+
+Rules:
+
+Complete challenge today → streak increases.
+
+Missing a day normally resets streak.
+
+Save locally and synchronize when online.
+
+Handle timezone carefully.
+
+Do not allow simple duplicate completion exploiting.
+
+# 27. CHALLENGE SCREEN
+
+Tabs:
+
+Daily
+
+Endless
+
+Weekly
+
+Daily section:
+
+Today's puzzle
+
+Current streak
+
+Calendar
+
+Best streak
+
+Endless:
+
+Start Endless Mode
+
+Best streak
+
+Total solved
+
+Weekly can initially display locally generated weekly targets.
+
+# 28. WEEKLY CHALLENGES
+
+Examples:
+
+Complete 20 puzzles
+
+Solve 5 Hard puzzles
+
+Finish 3 puzzles without hints
+
+Complete 5 Daily Challenges
+
+Reward:
+
+XP
+
+Badge progress
+
+No monetary rewards.
+
+# 29. ACHIEVEMENTS
+
+Create achievement system.
+
+Examples:
+
+First Step
+Complete 1 puzzle
+
+Getting Started
+Complete 10 puzzles
+
+Math Solver
+Complete 100 puzzles
+
+Perfect
+Complete a puzzle without mistakes
+
+No Help Needed
+Complete a puzzle without hints
+
+Speed Solver
+Complete an Easy puzzle under target time
+
+Week Warrior
+7-day Daily Challenge streak
+
+Master Mind
+Complete 100 Hard/Expert puzzles
+
+Create an achievements screen with:
+
+Locked
+
+Unlocked
+
+Progress
+
+Date earned
+
+# 30. STATISTICS SCREEN
+
+Show:
+
+Games Played
+
+Games Completed
+
+Completion %
+
+Total Solve Time
+
+Average Solve Time
+
+Best Time
+
+Current Streak
+
+Best Streak
+
+Hints Used
+
+Mistakes
+
+Total XP
+
+Current Level
+
+Difficulty breakdown.
+
+Create charts/cards for:
+
+Easy
+Medium
+Hard
+Expert
+
+Do not require a network connection.
+
+# 31. LEADERBOARD
+
+Use Supabase.
+
+Leaderboard categories:
+
+Daily
+
+Weekly
+
+All Time
+
+Fields:
+
+rank
+display name
+avatar
+score
+completed puzzles
+best streak
+
+Users should be able to use a random generated guest name if not registered.
+
+Example:
+
+SmartFox823
+
+Do not expose private user information.
+
+# 32. PROFILE SCREEN
+
+Show:
+
+Avatar
+
+Display Name
+
+Player Level
+
+XP
+
+Joined date
+
+Games completed
+
+Achievements
+
+Best streak
+
+Allow changing:
+
+Display name
+
+Avatar style
+
+Theme
+
+Create Account / Sign In
+
+# 33. AUTHENTICATION
+
+Guest mode is primary.
+
+Do not force login.
+
+Support architecture for:
+
+Email
+
+Google
+
+Apple on iOS
+
+If implementation complexity becomes unnecessary for V1, implement:
+
+Guest / anonymous Supabase user
+
+Email authentication
+
+and leave Google/Apple behind isolated providers that are easy to activate.
+
+Never block offline gameplay because authentication fails.
+
+# 34. SETTINGS
+
+Sections:
+
+Gameplay
+
+Sound
+
+Vibration
+
+Timer
+
+Mistake checking
+
+Auto-check completed equations
+
+Appearance
+
+Theme:
+Light
+Dark
+System
+
+Text size:
+Normal
+Large
+
+Account
+
+Sync
+
+Privacy
+
+Terms
+
+About
+
+Version
+
+Reset Progress
+
+Reset Progress must show confirmation dialog.
+
+# 35. SOUND & HAPTICS
+
+Create sound manager.
+
+Sounds:
+
+button tap
+
+number entered
+
+wrong answer
+
+correct equation
+
+puzzle complete
+
+achievement unlocked
+
+Allow sound toggle.
+
+Use subtle haptics.
+
+Allow vibration toggle.
+
+Avoid excessive vibration.
+
+# 36. ANIMATIONS
+
+Use tasteful animations.
+
+Examples:
+
+cell selection
+
+number placement
+
+correct row glow
+
+puzzle completion
+
+XP counter
+
+star animation
+
+achievement unlock
+
+page transitions
+
+Avoid heavy animations that damage performance.
+
+# 37. ACCESSIBILITY
+
+Support:
+
+large text option
+
+high readable contrast
+
+minimum touch targets
+
+semantic labels
+
+screen-reader-friendly major controls
+
+do not rely on color alone for mistakes/correctness
+
+# 38. OFFLINE-FIRST DATA
+
+Use Drift/SQLite.
+
+Suggested local tables:
+
+app_settings
+
+player_profile
+
+game_progress
+
+level_progress
+
+saved_games
+
+daily_challenges
+
+statistics
+
+achievements
+
+weekly_challenges
+
+sync_queue
+
+Create repositories around the database.
+
+Persist current game after every meaningful change.
+
+If the app is force closed, it should resume.
+
+# 39. SUPABASE DATABASE
+
+Create SQL migrations.
+
+Tables:
+
+profiles
+
+user_stats
+
+daily_challenge_results
+
+leaderboard_scores
+
+achievements
+
+user_achievements
+
+sync_events
+
+remote_config
+
+Suggested `profiles`:
+
+id UUID PK references auth.users
+
+display_name
+
+avatar_id
+
+level
+
+xp
+
+created_at
+
+updated_at
+
+Suggested `user_stats`:
+
+user_id
+
+games_played
+
+games_completed
+
+total_time_seconds
+
+hints_used
+
+mistakes
+
+current_streak
+
+best_streak
+
+easy_completed
+
+medium_completed
+
+hard_completed
+
+expert_completed
+
+updated_at
+
+Suggested daily challenge results:
+
+id
+
+user_id
+
+challenge_date
+
+puzzle_seed
+
+difficulty
+
+time_seconds
+
+mistakes
+
+hints
+
+score
+
+completed_at
+
+Unique constraint:
+
+user_id + challenge_date
+
+Create Row Level Security policies.
+
+A user may:
+
+read/update their own profile
+
+read/write their own stats
+
+submit their own challenge result
+
+read public leaderboard-safe fields
+
+Do not expose email addresses.
+
+# 40. CLOUD SYNC
+
+Implement synchronization service.
+
+When offline:
+
+Save changes locally.
+
+Insert sync operations into sync queue.
+
+When network returns:
+
+Upload unsynchronized changes.
+
+Resolve simple conflicts.
+
+Local gameplay should never fail because cloud sync fails.
+
+Show subtle sync status.
+
+Do not show annoying connection errors during gameplay.
+
+# 41. NETWORK HANDLING
+
+Create network service.
+
+States:
+
+online
+
+offline
+
+syncing
+
+error
+
+When offline:
+
+Show small:
+
+Offline Mode
+
+Game remains fully usable.
+
+# 42. SCORE FORMULA
+
+Create configurable score service.
+
+Example factors:
+
+base difficulty points
+
+time bonus
+
+mistake penalty
+
+hint penalty
+
+completion bonus
+
+daily challenge bonus
+
+Do not calculate leaderboard score directly inside UI.
+
+Use:
+
+`ScoreService`
+
+Unit test scoring.
+
+# 43. PUZZLE GENERATOR ARCHITECTURE
+
+Create these types/services:
+
+Puzzle
+
+PuzzleCell
+
+PuzzleEquation
+
+PuzzleDifficulty
+
+PuzzleGenerator
+
+PuzzleValidator
+
+PuzzleSolver
+
+PuzzleSeed
+
+PuzzleGameState
+
+Generate puzzle from:
+
+difficulty
+
+seed
+
+optional grid size
+
+Suggested process:
+
+1. Choose valid mathematical equations.
+2. Arrange equations into intersecting grid.
+3. Validate intersections.
+4. Ensure all result values are consistent.
+5. Hide selected number cells.
+6. Run solver.
+7. Ensure exactly one valid solution.
+8. Calculate difficulty rating.
+9. Return puzzle.
+
+Implement generator retry limit.
+
+If generation fails:
+
+change internal derived seed and retry.
+
+Never crash.
+
+# 44. PUZZLE SOLVER
+
+Implement an internal solver used for validation.
+
+It should not simply read the stored solution while testing uniqueness.
+
+It should check available candidate values under puzzle constraints.
+
+Use it to ensure generated puzzles are solvable and preferably unique.
+
+Add unit tests.
+
+# 45. DIFFICULTY RATING
+
+Difficulty should consider:
+
+grid size
+
+operator count
+
+number range
+
+number of hidden cells
+
+intersection count
+
+dependency chain length
+
+available hints
+
+Create a numeric difficulty score internally.
+
+Map score to:
+
+Easy
+Medium
+Hard
+Expert
+
+# 46. GAME STATE MANAGEMENT
+
+Use Riverpod.
+
+Suggested providers:
+
+settingsProvider
+
+playerProvider
+
+gameSessionProvider
+
+dailyChallengeProvider
+
+statisticsProvider
+
+leaderboardProvider
+
+achievementsProvider
+
+syncProvider
+
+networkProvider
+
+Do not put game state in StatefulWidgets unnecessarily.
+
+# 47. NAVIGATION
+
+Use go_router.
+
+Suggested routes:
+
+/
+
+ /onboarding
+
+ /home
+
+ /game
+
+ /levels
+
+ /daily
+
+ /challenges
+
+ /stats
+
+ /leaderboard
+
+ /achievements
+
+ /profile
+
+ /settings
+
+Handle system back navigation correctly.
+
+Warn before abandoning an unfinished puzzle.
+
+# 48. FOLDER STRUCTURE
+
+Use a clean structure similar to:
+
+lib/
+
+app/
+
+app.dart
+
+router/
+
+theme/
+
+config/
+
+core/
+
+database/
+
+network/
+
+services/
+
+utils/
+
+widgets/
+
+features/
+
+onboarding/
+
+home/
+
+game/
+
+levels/
+
+daily_challenge/
+
+challenges/
+
+statistics/
+
+leaderboard/
+
+achievements/
+
+profile/
+
+settings/
+
+sync/
+
+Within each feature separate:
+
+data
+
+domain
+
+presentation
+
+Do not create unnecessary abstraction for tiny files.
+
+# 49. ERROR HANDLING
+
+Create reusable error handler.
+
+Do not expose raw backend errors.
+
+Examples:
+
+Unable to sync right now.
+
+You're offline. Progress is saved on this device.
+
+Could not load leaderboard.
+
+Core game should never terminate because Supabase is unavailable.
+
+# 50. LOADING STATES
+
+Use skeletons or subtle indicators.
+
+Never block game loading unnecessarily.
+
+Generated local puzzle should appear quickly.
+
+# 51. EMPTY STATES
+
+Create polished empty states for:
+
+No achievements yet
+
+Leaderboard unavailable
+
+No previous daily challenges
+
+No statistics yet
+
+# 52. SHARE RESULT
+
+Create share text.
+
+Example:
+
+NumCross Daily Challenge ✅
+
+Difficulty: Hard
+Time: 02:41
+⭐ ⭐ ⭐
+🔥 12 day streak
+
+Can you beat my score?
+
+Do not share puzzle answers.
+
+Use platform share sheet.
+
+# 53. PRIVACY
+
+Do not collect unnecessary information.
+
+Do not require contacts.
+
+Do not require location.
+
+Do not require microphone.
+
+Do not require camera.
+
+Store only game-related data.
+
+Create placeholders for privacy policy and terms.
+
+# 54. ADS
+
+Do NOT display ads in the current release.
+
+However create an isolated monetization layer/interface so AdMob can be added later without rewriting game logic.
+
+Example:
+
+`MonetizationService`
+
+Current implementation:
+
+`NoOpMonetizationService`
+
+Future:
+
+`AdMobMonetizationService`
+
+Do not include ad banners, interstitials, or rewarded ads in the initial UI.
+
+# 55. FUTURE MONETIZATION READINESS
+
+Architect for later support of:
+
+rewarded ad for extra hint
+
+remove ads purchase
+
+theme packs
+
+premium puzzle modes
+
+Do not implement purchases unless specifically required later.
+
+# 56. REMOTE CONFIG
+
+Use Supabase remote_config table.
+
+Allow configurable values:
+
+maintenance message
+
+daily challenge difficulty
+
+XP values
+
+hint counts
+
+weekly challenge goals
+
+feature flags
+
+Never require remote config to start the game.
+
+Cache values locally.
+
+Use safe defaults.
+
+# 57. ANALYTICS ARCHITECTURE
+
+Create a generic analytics abstraction.
+
+Events:
+
+app_open
+
+puzzle_started
+
+puzzle_completed
+
+puzzle_abandoned
+
+hint_used
+
+daily_challenge_started
+
+daily_challenge_completed
+
+achievement_unlocked
+
+level_completed
+
+No analytics SDK is required initially unless already configured.
+
+Provide:
+
+`AnalyticsService`
+
+`DebugAnalyticsService`
+
+so Firebase Analytics can later be plugged in.
+
+# 58. PERFORMANCE
+
+Target smooth 60 FPS.
+
+Avoid rebuilding full puzzle grid for every timer tick.
+
+Keep timer isolated.
+
+Use const widgets where possible.
+
+Optimize providers.
+
+Avoid large images.
+
+Dispose controllers correctly.
+
+# 59. TESTING
+
+Create unit tests for:
+
+addition puzzle generation
+
+subtraction puzzle generation
+
+multiplication puzzle generation
+
+division puzzle generation
+
+difficulty rules
+
+seed reproducibility
+
+puzzle validator
+
+puzzle solver
+
+score service
+
+XP service
+
+streak service
+
+daily challenge seed
+
+game state undo
+
+game state erase
+
+hint behavior
+
+statistics calculations
+
+Add widget tests for:
+
+Home Screen
+
+Game Screen
+
+Result Screen
+
+Settings
+
+# 60. SEED REPRODUCIBILITY TEST
+
+Important:
+
+Given:
+
+seed = `12345`
+
+difficulty = Hard
+
+PuzzleGenerator should generate the same puzzle every time.
+
+Daily Challenge should therefore work offline across devices using the same algorithm version.
+
+Store generator version.
+
+Example:
+
+generatorVersion = 1
+
+Include it in daily challenge metadata.
+
+# 61. GAME VERSIONING
+
+Create:
+
+app version
+
+puzzle generator version
+
+local database schema version
+
+Support migrations.
+
+# 62. APP ICON & SPLASH CONFIGURATION
+
+Configure project for:
+
+Android launcher icon
+
+iOS app icon
+
+native splash
+
+Use temporary original NumCross assets if final branding is not supplied.
+
+Do not use copyrighted assets.
+
+# 63. ANDROID PRODUCTION SETUP
+
+Prepare:
+
+application label
+
+package placeholder
+
+internet permission only where necessary
+
+release-safe configuration
+
+ProGuard/R8 compatibility where applicable
+
+adaptive icon
+
+edge-to-edge UI
+
+Android 13+ compatibility
+
+Android back navigation
+
+# 64. IOS PRODUCTION SETUP
+
+Prepare:
+
+bundle identifier placeholder
+
+display name
+
+icons
+
+launch screen
+
+safe areas
+
+notches
+
+iPhone layouts
+
+iPad reasonable scaling
+
+Do not add unnecessary permissions.
+
+# 65. ENVIRONMENT CONFIG
+
+Do not hardcode Supabase secrets.
+
+Create:
+
+`.env.example`
+
+Example:
+
+SUPABASE_URL=
+
+SUPABASE_ANON_KEY=
+
+Never commit service role keys into Flutter app.
+
+Create configuration validation.
+
+If Supabase credentials are absent:
+
+app should still run in offline/local-only mode during development.
+
+# 66. README
+
+Create a professional README containing:
+
+project overview
+
+Flutter requirements
+
+setup instructions
+
+Supabase setup
+
+environment variables
+
+database migration instructions
+
+run commands
+
+test commands
+
+build Android
+
+build iOS
+
+architecture overview
+
+folder structure
+
+how puzzle generation works
+
+how daily challenge works
+
+how to change branding
+
+how to change app name
+
+how to add Supabase credentials
+
+future AdMob integration location
+
+# 67. DEVELOPER MENU
+
+In debug builds only create a developer screen accessible through a hidden action.
+
+Options:
+
+Generate Easy puzzle
+
+Generate Medium puzzle
+
+Generate Hard puzzle
+
+Generate Expert puzzle
+
+Enter custom seed
+
+Complete current puzzle
+
+Reset local data
+
+Give XP
+
+Unlock all levels
+
+Simulate next day
+
+Test achievement
+
+Test offline mode
+
+Never include developer controls in production release.
+
+# 68. GAME POLISH
+
+Add:
+
+smooth button press animations
+
+subtle celebratory confetti
+
+animated star reveal
+
+daily streak flame animation
+
+nice progress bars
+
+gentle cell feedback
+
+bottom sheets
+
+polished dialogs
+
+Avoid excessive effects.
+
+# 69. HOME EXPERIENCE EXAMPLE
+
+Home should roughly communicate:
+
+NumCross
+
+Good Morning 👋
+
+Level 12
+████████░░
+650 / 900 XP
+
+🔥 7 Day Streak
+
+[ PLAY ]
+
+Choose Difficulty
+Easy   Medium   Hard   Expert
+
+Daily Challenge
+Today's Puzzle
+[Play]
+
+Continue
+Hard • 03:21
+
+Do not treat this as an exact wireframe.
+
+Improve the visual hierarchy.
+
+# 70. GAMEPLAY SCREEN EXAMPLE
+
+Top:
+
+←
+HARD
+03:21
+⏸
+
+Center:
+
+Cross-math puzzle grid
+
+Below:
+
+Selected cell indicator
+
+Number pad
+
+Bottom controls:
+
+Undo
+Erase
+Hint
+Check
+
+# 71. RESULT SCREEN EXAMPLE
+
+🎉
+
+Excellent!
+
+★★★
+
+Hard Puzzle Completed
+
+02:41
+
+0 Mistakes
+0 Hints
+
++120 XP
+
+[Next Puzzle]
+
+[Home]
+
+Share Result
+
+# 72. STATS UI
+
+Use cards and simple charts.
+
+Example:
+
+Total Completed
+142
+
+Best Streak
+18 Days
+
+Average Time
+03:28
+
+Perfect Games
+47
+
+Difficulty Breakdown
+
+Easy
+56
+
+Medium
+43
+
+Hard
+31
+
+Expert
+12
+
+# 73. ORIGINALITY
+
+The application may use the common idea of mathematical crossword puzzles.
+
+However:
+
+Do not use another app's name.
+
+Do not use another app's screenshots.
+
+Do not copy exact screen layouts.
+
+Do not copy their icon.
+
+Do not copy their level data.
+
+Do not copy their wording.
+
+Do not copy proprietary assets.
+
+Create everything original.
+
+# 74. CODE QUALITY REQUIREMENTS
+
+Use meaningful names.
+
+Document complex algorithms.
+
+Do not over-comment obvious code.
+
+Avoid dynamic where possible.
+
+Avoid global mutable state.
+
+Use immutable state models.
+
+Handle asynchronous errors.
+
+Keep build methods readable.
+
+Extract reusable widgets.
+
+# 75. ACCEPTANCE CRITERIA
+
+The project is complete only when:
+
+1. App launches successfully.
+
+2. Onboarding works.
+
+3. User can start a puzzle.
+
+4. Puzzle is generated locally.
+
+5. Number input works.
+
+6. Undo works.
+
+7. Erase works.
+
+8. Hint works.
+
+9. Check works.
+
+10. Puzzle completion detection works.
+
+11. Result screen appears.
+
+12. XP updates.
+
+13. Stars are saved.
+
+14. Statistics update.
+
+15. Progress survives restart.
+
+16. Daily Challenge works.
+
+17. Streak system works.
+
+18. Level progression works.
+
+19. Endless mode works.
+
+20. Settings persist.
+
+21. Dark mode works.
+
+22. Sound toggle works.
+
+23. Vibration toggle works.
+
+24. Timer setting works.
+
+25. Offline mode works.
+
+26. Supabase sync gracefully works when configured.
+
+27. Leaderboard works when Supabase is available.
+
+28. Achievements work.
+
+29. flutter analyze passes.
+
+30. flutter test passes.
+
+31. Android build succeeds.
+
+32. iOS source/configuration is valid.
+
+# 76. IMPLEMENTATION ORDER
+
+Implement in this order:
+
+Phase 1
+
+Project architecture
+
+Theme
+
+Routing
+
+Local database
+
+App settings
+
+Splash
+
+Onboarding
+
+Home
+
+Phase 2
+
+Puzzle models
+
+Generator
+
+Validator
+
+Solver
+
+Unit tests
+
+Phase 3
+
+Game screen
+
+Grid
+
+Number input
+
+Undo
+
+Erase
+
+Hint
+
+Check
+
+Timer
+
+Pause
+
+Result
+
+Phase 4
+
+XP
+
+Stars
+
+Levels
+
+Statistics
+
+Achievements
+
+Phase 5
+
+Daily Challenge
+
+Streaks
+
+Endless Mode
+
+Weekly Challenges
+
+Phase 6
+
+Supabase
+
+Authentication
+
+Profiles
+
+Cloud sync
+
+Leaderboard
+
+Remote config
+
+Phase 7
+
+Sound
+
+Haptics
+
+Animations
+
+Accessibility
+
+Dark mode polish
+
+Phase 8
+
+Testing
+
+Performance
+
+Android production configuration
+
+iOS production configuration
+
+README
+
+# 77. HOW TO WORK
+
+Do not ask me to create every file manually.
+
+You are responsible for creating the project structure and files.
+
+Work through the implementation systematically.
+
+After each major phase:
+
+- run formatter
+- run analyzer
+- run relevant tests
+- fix issues
+
+Do not stop after creating the UI.
+
+Do not give me just example code.
+
+Implement the actual application.
+
+When a design decision is unspecified, choose the option that produces the cleanest, simplest and most professional mobile experience.
+
+If a backend feature cannot work because Supabase credentials are not currently provided, implement the full integration layer, local fallback, SQL migration files, `.env.example`, and mock/debug mode so the rest of the app remains runnable.
+
+# 78. FINAL DELIVERY
+
+At completion provide:
+
+1. Complete Flutter project.
+
+2. Working Android app source.
+
+3. iOS project source.
+
+4. Supabase SQL migrations.
+
+5. `.env.example`.
+
+6. README.
+
+7. Tests.
+
+8. Asset placeholders.we
+
+9. List of implemented features.
+
+10. List of commands required to run the project.
+
+11. Any remaining setup that requires external credentials.
+
+12. Confirmation that `flutter analyze` passes.
+
+13. Confirmation that tests pass.
+
+14. Confirmation that no other game's copyrighted branding/assets were copied.
+
+Start implementing the application now.
