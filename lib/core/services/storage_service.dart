@@ -96,7 +96,7 @@ class AppSettings {
     this.autoCheckEquations = true,
     this.theme = 'system',
     this.textSize = 'normal',
-    this.onboardingCompleted = true,
+    this.onboardingCompleted = false,
   });
 
   Map<String, dynamic> toJson() => {
@@ -118,7 +118,7 @@ class AppSettings {
         autoCheckEquations: json['autoCheckEquations'] ?? true,
         theme: json['theme'] ?? 'system',
         textSize: json['textSize'] ?? 'normal',
-        onboardingCompleted: json['onboardingCompleted'] ?? true,
+        onboardingCompleted: json['onboardingCompleted'] ?? false,
       );
 }
 

@@ -7,7 +7,6 @@ class _C {
   static const navy = Color(0xFF0F1F5C);
   static const blue = Color(0xFF1D6BF3);
   static const muted = Color(0xFF6B7A99);
-  static const green = Color(0xFF22C55E);
 }
 
 class StatisticsScreen extends StatelessWidget {

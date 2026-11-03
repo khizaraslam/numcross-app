@@ -71,12 +71,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (mounted) setState(_load);
   }
 
-  void _showMsg(String text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(text), duration: const Duration(seconds: 1)),
-    );
-  }
-
   // ---------------- Edit profile dialog ----------------
   Future<void> _editProfile() async {
     final controller = TextEditingController(text: _p.name);

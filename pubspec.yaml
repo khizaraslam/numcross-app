@@ -23,6 +23,8 @@ dependencies:
   google_fonts: ^6.2.1
   cupertino_icons: ^1.0.8
   vibration: ^3.2.1
+  flutter_dotenv: ^6.0.1
+  flutter_native_splash: ^2.4.8
 
 dev_dependencies:
   flutter_test:
@@ -34,5 +36,27 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - .env
+    - .env.example
     - assets/branding/
     - assets/audio/
+
+# Native splash (Android 12+ + iOS LaunchScreen) — run:
+#   dart run flutter_native_splash:create
+flutter_native_splash:
+  color: "#002C92"
+  color_dark: "#002C92"
+  image: assets/branding/splash_logo_centered.png
+  image_dark: assets/branding/splash_logo_centered.png
+  android: true
+  ios: true
+  web: false
+  android_12:
+    color: "#002C92"
+    color_dark: "#002C92"
+    # Padded so Android 12's circular mask does not crop "Math Puzzle".
+    image: assets/branding/splash_logo_android12.png
+    image_dark: assets/branding/splash_logo_android12.png
+  android_gravity: center
+  ios_content_mode: scaleAspectFit
+  fullscreen: false

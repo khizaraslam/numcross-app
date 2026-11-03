@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import '../../../app/config/app_config.dart';
 import '../../../app/theme/app_theme.dart';
+import '../../../core/services/storage_service.dart';
 import '../../home/presentation/home_screen.dart';
 import '../../onboarding/presentation/onboarding_screen.dart';
-import '../../../core/services/storage_service.dart';
+
+/// Brand blue used by the native splash / app icon background.
+const Color _splashBg = Color(0xFF002C92);
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -11,119 +17,157 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
-  double _progress = 0.2;
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  double _progress = 0.15;
+  late final AnimationController _fade;
 
   @override
   void initState() {
     super.initState();
+    _fade = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    )..forward();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FlutterNativeSplash.remove();
+    });
     _startLoading();
   }
 
-  void _startLoading() async {
-    for (int i = 0; i < 5; i++) {
-      await Future.delayed(const Duration(milliseconds: 250));
-      if (mounted) {
-        setState(() {
-          _progress += 0.16;
-        });
-      }
+  @override
+  void dispose() {
+    _fade.dispose();
+    super.dispose();
+  }
+
+  Future<void> _startLoading() async {
+    for (int i = 0; i < 4; i++) {
+      await Future.delayed(const Duration(milliseconds: 220));
+      if (!mounted) return;
+      setState(() => _progress = (_progress + 0.2).clamp(0.0, 1.0));
     }
 
-    if (mounted) {
-      final settings = FlutterStorageService.getSettings();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => settings.onboardingCompleted
-              ? const NumCrossHomeScreen()
-              : const OnboardingScreen(),
-        ),
-      );
-    }
+    if (!mounted) return;
+    final settings = FlutterStorageService.getSettings();
+    final next = settings.onboardingCompleted
+        ? const NumCrossHomeScreen()
+        : const OnboardingScreen();
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => next,
+        transitionsBuilder: (_, anim, __, child) =>
+            FadeTransition(opacity: anim, child: child),
+        transitionDuration: const Duration(milliseconds: 350),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.canvasLight,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    // Status bar follows the phone theme (light/dark), not brand blue.
+    final systemDark =
+        MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+    final overlay =
+        systemDark ? AppTheme.darkOverlay : AppTheme.lightOverlay;
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: overlay,
+      child: Scaffold(
+        backgroundColor: _splashBg,
+        body: FadeTransition(
+          opacity: _fade,
+          child: Stack(
+            fit: StackFit.expand,
             children: [
-              const SizedBox(height: 40),
-              Column(
-                children: [
-                  Image.asset(
-                    'assets/branding/NumCross_Math_Puzzle_Logo_3b755d3e.png',
-                    width: 220,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Column(
-                        children: const [
-                          Icon(Icons.grid_4x4_rounded, size: 80, color: AppColors.primaryBlue),
-                          SizedBox(height: 12),
-                          Text(
-                            'NumCross',
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.w900,
-                              color: Color(0xFF1E3A8A),
-                            ),
-                          ),
-                          Text(
-                            'MATH PUZZLE',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.primaryBlue,
-                              letterSpacing: 2,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+              // True optical center — independent of bottom loader.
+              Center(
+                child: Image.asset(
+                  AppConfig.splashLogoAsset,
+                  width: MediaQuery.sizeOf(context).width * 0.58,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Image.asset(
+                    AppConfig.logoAsset,
+                    width: MediaQuery.sizeOf(context).width * 0.5,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) => const _LogoFallback(),
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Train Your Brain\nOne Equation at a Time',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textMuted,
-                      height: 1.4,
-                    ),
-                  ),
-                ],
+                ),
               ),
-              Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: SizedBox(
-                      width: 200,
-                      height: 8,
-                      child: LinearProgressIndicator(
-                        value: _progress.clamp(0.0, 1.0),
-                        backgroundColor: Colors.blue.shade100,
-                        valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primaryBlue),
-                      ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 36),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: SizedBox(
+                            width: 200,
+                            height: 8,
+                            child: LinearProgressIndicator(
+                              value: _progress,
+                              backgroundColor: Colors.white24,
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'Loading...',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Loading...',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primaryBlue),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _LogoFallback extends StatelessWidget {
+  const _LogoFallback();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.grid_4x4_rounded, size: 80, color: Colors.white),
+        SizedBox(height: 12),
+        Text(
+          'NumCross',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+          ),
+        ),
+        Text(
+          'MATH PUZZLE',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            color: Colors.white70,
+            letterSpacing: 2,
+          ),
+        ),
+      ],
     );
   }
 }

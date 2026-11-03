@@ -51,3 +51,11 @@ app.*.map.json
 *.bak
 android/build/
 test/widget_test_backup.dart
+
+# Secrets / local signing
+.env
+.env.*
+!.env.example
+android/key.properties
+**/*.jks
+**/*.keystore

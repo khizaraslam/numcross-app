@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
@@ -33,6 +34,25 @@ class AppSpacing {
 }
 
 class AppTheme {
+  /// Matches the phone theme: transparent bar + system-style icon contrast.
+  static const SystemUiOverlayStyle lightOverlay = SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.dark,
+    statusBarBrightness: Brightness.light, // iOS: dark icons
+    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarIconBrightness: Brightness.dark,
+    systemNavigationBarContrastEnforced: false,
+  );
+
+  static const SystemUiOverlayStyle darkOverlay = SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.light,
+    statusBarBrightness: Brightness.dark, // iOS: light icons
+    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarIconBrightness: Brightness.light,
+    systemNavigationBarContrastEnforced: false,
+  );
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
@@ -43,6 +63,12 @@ class AppTheme {
         brightness: Brightness.light,
       ),
       textTheme: GoogleFonts.plusJakartaSansTextTheme(),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.canvasLight,
+        foregroundColor: AppColors.textMain,
+        elevation: 0,
+        systemOverlayStyle: lightOverlay,
+      ),
     );
   }
 
@@ -56,6 +82,12 @@ class AppTheme {
         brightness: Brightness.dark,
       ),
       textTheme: GoogleFonts.plusJakartaSansTextTheme(ThemeData.dark().textTheme),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFF0F172A),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        systemOverlayStyle: darkOverlay,
+      ),
     );
   }
 }
