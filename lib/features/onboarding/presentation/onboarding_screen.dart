@@ -163,7 +163,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             borderRadius: BorderRadius.circular(28),
                             child: Image.asset(
                               slide.asset,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                               width: double.infinity,
                               errorBuilder: (_, __, ___) => Container(
                                 color: Colors.white,

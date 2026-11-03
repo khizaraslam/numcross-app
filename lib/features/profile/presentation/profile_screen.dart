@@ -251,26 +251,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         child: Stack(
           children: [
+            // Trophy sits in its own space on the right
+            // (the text area below stops before it)
             const Positioned(
-                right: 6,
-                bottom: -4,
-                child: Text('🏆', style: TextStyle(fontSize: 92))),
+                right: 0,
+                bottom: -2,
+                child: Text('🏆', style: TextStyle(fontSize: 66))),
             const Positioned(
-                right: 100,
+                right: 56,
                 top: 12,
-                child: Text('✨', style: TextStyle(fontSize: 22))),
+                child: Text('✨', style: TextStyle(fontSize: 18))),
             Row(
               children: [
                 GestureDetector(
                   onTap: _editProfile,
                   child: SizedBox(
-                    width: 94,
-                    height: 94,
+                    width: 84,
+                    height: 84,
                     child: Stack(
                       children: [
                         Container(
-                          width: 94,
-                          height: 94,
+                          width: 84,
+                          height: 84,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: const Color(0xFFBFE0FF),
@@ -278,41 +280,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           child: Center(
                               child: Text(_avatar,
-                                  style: const TextStyle(fontSize: 52))),
+                                  style: const TextStyle(fontSize: 46))),
                         ),
                         Positioned(
                           right: 0,
                           bottom: 0,
                           child: Container(
-                            width: 30,
-                            height: 30,
+                            width: 28,
+                            height: 28,
                             decoration: const BoxDecoration(
                                 color: Colors.white,
                                 shape: BoxShape.circle),
                             child: const Icon(Icons.edit_rounded,
-                                color: _C.blue, size: 17),
+                                color: _C.blue, size: 16),
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 12),
+                // Text area: takes only the space between avatar and trophy.
+                // FittedBox shrinks long text instead of letting it run
+                // under the trophy.
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(_p.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              fontSize: 23,
-                              fontWeight: FontWeight.w900,
-                              color: _C.navy)),
-                      Text('${_fmt(_totalXp)} XP earned',
-                          style: const TextStyle(
-                              fontSize: 13, color: _C.muted)),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(_p.name,
+                            maxLines: 1,
+                            style: const TextStyle(
+                                fontSize: 23,
+                                fontWeight: FontWeight.w900,
+                                color: _C.navy)),
+                      ),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text('${_fmt(_totalXp)} XP earned',
+                            maxLines: 1,
+                            style: const TextStyle(
+                                fontSize: 13, color: _C.muted)),
+                      ),
                       const SizedBox(height: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -338,7 +351,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(width: 70),
+                // space reserved for the trophy
+                const SizedBox(width: 78),
               ],
             ),
           ],

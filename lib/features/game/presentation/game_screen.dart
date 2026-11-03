@@ -277,10 +277,9 @@ class _NumCrossGameScreenState extends State<NumCrossGameScreen> {
   }
 
   void _checkVictory({bool force = false}) {
-    // With Auto-Check off, the puzzle only finishes when Check is pressed
-    if (!force && !SettingsService.current.autoCheckEquations) return;
     if (_isCompleted) return;
 
+    // Are all answers correct?
     for (int r = 0; r < 5; r++) {
       for (int c = 0; c < 5; c++) {
         final cell = _puzzle.cells[r][c];
@@ -288,6 +287,17 @@ class _NumCrossGameScreenState extends State<NumCrossGameScreen> {
           return;
         }
       }
+    }
+
+    // All correct. With Auto-Check off, the puzzle only finishes on Check.
+    if (!force && !SettingsService.current.autoCheckEquations) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(
+          content: Text('All answers are filled. Press Check to finish!'),
+          duration: Duration(seconds: 2),
+        ));
+      return;
     }
 
     _isCompleted = true;
@@ -549,15 +559,17 @@ class _NumCrossGameScreenState extends State<NumCrossGameScreen> {
                           bg = Colors.white.withOpacity(0.7);
                           textCol = AppColors.primaryBlue;
                         } else if (!cell.isInitial) {
-                          if (isSelected) {
+                          if (cell.isWrong) {
+                            // wrong stays red even while the cell is selected
+                            border = Border.all(
+                                color: Colors.redAccent,
+                                width: isSelected ? 3 : 2);
+                            bg = const Color(0xFFFEE2E2);
+                            textCol = Colors.redAccent;
+                          } else if (isSelected) {
                             border = Border.all(
                                 color: AppColors.primaryBlue, width: 2.5);
                             bg = const Color(0xFFDBEAFE);
-                          } else if (cell.isWrong) {
-                            border =
-                                Border.all(color: Colors.redAccent, width: 2);
-                            bg = const Color(0xFFFEE2E2);
-                            textCol = Colors.redAccent;
                           } else if (cell.isHinted) {
                             border = Border.all(color: Colors.amber, width: 2);
                             bg = const Color(0xFFFEF3C7);

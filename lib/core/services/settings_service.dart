@@ -126,6 +126,33 @@ class SettingsService {
     }
   }
 
+  // ---------------- Test buttons (used by the Settings screen) ----------------
+
+  /// Plays a sound ignoring the toggle, and returns a message about what happened.
+  static Future<String> testSound() async {
+    try {
+      await _successPlayer.stop();
+      await _successPlayer.play(BytesSource(_successWav), volume: 1.0);
+      return 'Sound play ho gayi. Agar awaaz nahi aayi to phone ka MEDIA volume check karein.';
+    } catch (e) {
+      return 'Sound error: $e\n\nApp ko Stop karke dobara Run karein (hot restart kaafi nahi).';
+    }
+  }
+
+  /// Vibrates ignoring the toggle, and returns a message about what happened.
+  static Future<String> testVibration() async {
+    try {
+      final has = await Vibration.hasVibrator();
+      if (has != true) {
+        return 'Is device mein vibration motor nahi mila (emulator par vibration nahi hoti).';
+      }
+      await Vibration.vibrate(duration: 400);
+      return 'Vibration bheji gayi. Mehsoos na ho to AndroidManifest mein VIBRATE permission aur phone ki vibration settings check karein.';
+    } catch (e) {
+      return 'Vibration error: $e\n\nAndroidManifest mein VIBRATE permission check karein, phir app Stop karke dobara Run karein.';
+    }
+  }
+
   // ---------------- Feedback (same names as before) ----------------
 
   /// Soft click sound (only if Sound Effects is on).

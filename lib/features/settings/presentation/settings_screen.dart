@@ -80,7 +80,9 @@ class SettingsScreen extends StatelessWidget {
                       onChanged: (v) => SettingsService.update(
                           (x) => x.autoCheckEquations = v),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 4),
+                    _testCard(context),
+                    const SizedBox(height: 14),
 
                     // ---------------- Mistakes ----------------
                     _choiceCard(
@@ -152,6 +154,47 @@ class SettingsScreen extends StatelessWidget {
       default:
         return 'Wrong answers turn red right away';
     }
+  }
+
+  // ---------------- Test buttons ----------------
+  Widget _testCard(BuildContext context) {
+    Widget btn(IconData icon, String label, Future<String> Function() run) {
+      return Expanded(
+        child: ElevatedButton.icon(
+          onPressed: () async {
+            final msg = await run();
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(
+                content: Text(msg),
+                duration: const Duration(seconds: 5),
+              ));
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFE3EDFF),
+            foregroundColor: _C.blue,
+            elevation: 0,
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14)),
+          ),
+          icon: Icon(icon, size: 20),
+          label: Text(label,
+              style: const TextStyle(
+                  fontWeight: FontWeight.w800, fontSize: 13)),
+        ),
+      );
+    }
+
+    return Row(
+      children: [
+        btn(Icons.volume_up_rounded, 'Test Sound', SettingsService.testSound),
+        const SizedBox(width: 10),
+        btn(Icons.vibration_rounded, 'Test Vibration',
+            SettingsService.testVibration),
+      ],
+    );
   }
 
   // ---------------- Pieces ----------------

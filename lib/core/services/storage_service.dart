@@ -306,27 +306,34 @@ class FlutterStorageService {
     final str = _prefs?.getString(_keyDaily);
     if (str != null) {
       try {
-        return jsonDecode(str);
+        return Map<String, dynamic>.from(jsonDecode(str));
       } catch (_) {}
     }
-    return {
-      '2026-10-21': true,
-      '2026-10-22': true,
-      '2026-10-23': true,
-      '2026-10-24': true,
-      '2026-10-25': true,
-      '2026-10-26': true,
-    };
+    return <String, dynamic>{}; // new player: nothing completed yet
   }
+
+  static String _dateKey(DateTime d) =>
+      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
   static Future<void> setDailyCompleted(String dateStr) async {
     await _ensureInit();
     final map = getDailyProgress();
+
+    // Already counted for this day -> do nothing (no double streak)
+    if (map[dateStr] == true) return;
+
+    // Was the day before completed? Then the streak continues,
+    // otherwise it restarts at 1.
+    final p = dateStr.split('-');
+    final day = DateTime(int.parse(p[0]), int.parse(p[1]), int.parse(p[2]));
+    final yesterday = DateTime(day.year, day.month, day.day - 1);
+    final continues = map[_dateKey(yesterday)] == true;
+
     map[dateStr] = true;
     await _prefs?.setString(_keyDaily, jsonEncode(map));
 
     final profile = getProfile();
-    profile.currentStreak++;
+    profile.currentStreak = continues ? profile.currentStreak + 1 : 1;
     if (profile.currentStreak > profile.bestStreak) {
       profile.bestStreak = profile.currentStreak;
     }
