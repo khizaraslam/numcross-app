@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.company.numcross"
+    namespace = "com.numcross.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -15,7 +15,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.company.numcross"
+        applicationId = "com.numcross.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
